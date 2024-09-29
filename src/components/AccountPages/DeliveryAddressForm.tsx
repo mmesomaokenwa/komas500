@@ -15,6 +15,7 @@ import { shippingSchema } from "@/lib/schemas";
 import { useInterceptModal } from "@/providers/InterceptModalProvider";
 import { useToast } from "@/hooks/use-toast";
 import { Button, Input } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 
 type FormData = z.infer<typeof shippingSchema>;
 
@@ -25,7 +26,8 @@ type PropsType = {
 };
 
 const DeliveryAddressForm = ({ action, addressId, isIntercepted }: PropsType) => {
-  const user = useAppSelector((state) => state.user);
+  const { data: session } = useSession()
+  const user = session?.user
   const addressList = useAppSelector((state) => state.delivery.addressList);
   const selectedAddress = addressList.find(
     (address) => address.id === addressId
@@ -36,10 +38,10 @@ const DeliveryAddressForm = ({ action, addressId, isIntercepted }: PropsType) =>
   const form = useForm<FormData>({
     resolver: zodResolver(shippingSchema),
     defaultValues: {
-      firstName: selectedAddress?.firstName || user.fullName.split(" ")[0] || "",
-      lastName: selectedAddress?.lastName || user.fullName.split(" ")[1] || "",
-      emailAddress: selectedAddress?.emailAddress || user.emailAddress || "",
-      phoneNumber: selectedAddress?.phoneNumber || user.phoneNumber || "",
+      firstName: selectedAddress?.firstName || user?.fullName.split(" ")[0] || "",
+      lastName: selectedAddress?.lastName || user?.fullName.split(" ")[1] || "",
+      emailAddress: selectedAddress?.emailAddress || user?.emailAddress || "",
+      phoneNumber: selectedAddress?.phoneNumber || user?.phoneNumber || "",
       houseNumber: selectedAddress?.houseNumber || "",
       streetAddress: selectedAddress?.streetAddress || "",
       city: selectedAddress?.city || "",

@@ -1,25 +1,34 @@
 'use client'
 
-import { useAppSelector } from '@/redux-store/hooks'
-import Image from 'next/image'
+import { Skeleton, User } from '@nextui-org/react'
+import { useSession } from 'next-auth/react'
 import React from 'react'
 
 const UserTopCard = () => {
-  const user = useAppSelector(state => state.user)
+  const { data: session, status } = useSession()
+
+  const user = session?.user
   return (
-    <div className="flex items-center gap-2 p-4 rounded-xl bg-gray-100 md:mr-auto">
-      <Image
-        src={user.profileUrl || "/Images/Header/profile.jpeg"}
-        alt="profile"
-        width={50}
-        height={50}
-        className="rounded-full size-16 md:size-20"
+    <Skeleton
+      isLoaded={status !== "loading"}
+      className='rounded-xl'
+    >
+      <User
+        name={user?.fullName}
+        description={user?.emailAddress}
+        avatarProps={{
+          src: user?.profileUrl,
+          showFallback: true,
+          size: "lg",
+        }}
+        classNames={{
+          base: "justify-start p-4 rounded-xl bg-gray-100 w-full",
+          wrapper: "gap-2",
+          name: "md:text-xl font-semibold",
+          description: "text-gray-500",
+        }}
       />
-      <div className="flex flex-col gap-2">
-        <p className="md:text-xl font-semibold">{user.fullName}</p>
-        <p className="text-sm">{user.emailAddress}</p>
-      </div>
-    </div>
+    </Skeleton>
   );
 }
 

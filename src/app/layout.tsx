@@ -7,6 +7,7 @@ import QueryProvider from "@/providers/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import UIProvider from "@/providers/UIProvider";
+import AuthProvider from "@/providers/AuthProvider";
 
 const quicksand = Quicksand({ subsets: ["latin"] });
 
@@ -25,24 +26,24 @@ export default function GeneralLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={[quicksand.className, 'custom-scrollbar'].join(' ')}>
-        <StoreProvider>
-          <QueryProvider>
-            <WidthProvider>
-              <ThemeProvider
-                attribute="class"
-                enableSystem={false}
-                enableColorScheme
-                forcedTheme="light"
-              >
-                <UIProvider>
-                  {children}
-                </UIProvider>
-              </ThemeProvider>
-              <Toaster />
-            </WidthProvider>
-          </QueryProvider>
-        </StoreProvider>
+      <body className={[quicksand.className, "custom-scrollbar"].join(" ")}>
+        <AuthProvider>
+          <StoreProvider>
+            <QueryProvider>
+              <WidthProvider>
+                <ThemeProvider
+                  attribute="class"
+                  enableSystem={false}
+                  enableColorScheme
+                  forcedTheme="light"
+                >
+                  <UIProvider>{children}</UIProvider>
+                </ThemeProvider>
+                <Toaster />
+              </WidthProvider>
+            </QueryProvider>
+          </StoreProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 import { getImageSrc } from '@/lib/server-actions'
-import Image, { ImageProps } from 'next/image'
+import { Image, ImageProps, Skeleton } from '@nextui-org/react'
 import React, { Suspense } from 'react'
 
 type PropsType = ImageProps & {
@@ -10,7 +10,7 @@ const ServerImageRender = ({ folderName, ...props}: PropsType) => {
   return (
     <Suspense
       fallback={
-        <div className={`bg-gray-200 animate-pulse ${props.className}`} />
+        <Skeleton className={props.className} />
       }
     >
       <ServerImage {...props} folderName={folderName} />
@@ -28,6 +28,7 @@ const ServerImage = async ({ folderName, ...props }: PropsType) => {
     <Image
       {...props}
       src={src || ''}
+      alt={props.alt}
     />
   )
 }

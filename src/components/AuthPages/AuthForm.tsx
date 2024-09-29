@@ -14,11 +14,9 @@ import Link from "next/link";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { userActions } from "@/redux-store/store-slices/UserSlice";
-import { useAppDispatch } from "@/redux-store/hooks";
 import { createUser, loginUser, resetPassword, sendPasswordResetCode } from "@/lib/server-actions/auth";
-import { getUser } from "@/lib/server-actions/user";
 import { Button, Input } from "@nextui-org/react";
+import { signIn } from "next-auth/react";
 
 type Action = "register" | "login" | "forgot-password" | "reset-password";
 
@@ -39,12 +37,12 @@ const formSchema = {
 
 interface PropsType<T extends Action> {
   action: T;
-  redirect?: string; // redirect to this page after successful login
+  callbackUrl?: string; // redirect to this page after successful login
   replaceHistory?: boolean;
   resetPasswordCode?: string
 }
 
-const AuthForm = <T extends Action>({ action, redirect, replaceHistory, resetPasswordCode }: PropsType<T>) => {
+const AuthForm = <T extends Action>({ action, callbackUrl, replaceHistory, resetPasswordCode }: PropsType<T>) => {
   const form = useForm<FormValues<"register">>({
     resolver: zodResolver(formSchema[action]),
     mode: "all",
@@ -55,7 +53,6 @@ const AuthForm = <T extends Action>({ action, redirect, replaceHistory, resetPas
 
   const router = useRouter();
   const { toast } = useToast();
-  const dispatch = useAppDispatch();
 
 const onSubmit = async (data: FormValues<"register">) => {
     // Check the action type to determine the operation to perform
@@ -79,7 +76,7 @@ const onSubmit = async (data: FormValues<"register">) => {
 
       const searchParams = new URLSearchParams({
         username: data.emailAddress,
-        redirect: redirect || '',
+        callbackUrl: callbackUrl || '',
       });
 
       // Redirect to OTP verification with optional redirect URL
@@ -98,33 +95,42 @@ const onSubmit = async (data: FormValues<"register">) => {
         return toast({
           description: res.message,
           variant: "destructive",
-        });
+        })
+      
+      if (!!res.data) {
+        const res = await signIn('credentials', {
+          username: data.emailAddress,
+          password: data.password,
+          code: '',
+          redirect: false
+        })
+
+        if (!!res?.error)
+          return toast({
+            description: res.error,
+            variant: "destructive",
+          })
+      }
 
       toast({
         description: res.message
       });
 
-      // If the login is successful, get the user data from the server.
-      const { data: user } = await getUser();
-
-      // If the user data is available, dispatch an action to update the user state.
-      user && dispatch(userActions.setUser(user));
-
       // Set is2FAEnabled in localStorage
-      localStorage.setItem("is2FAEnabled", (!!res.data).toString());
+      localStorage.setItem("is2FAEnabled", (!res.data).toString());
 
       const searchParams = new URLSearchParams({
         username: data.emailAddress,
-        redirect: redirect || '',
+        callbackUrl: callbackUrl || '',
       })
 
       // Redirect to OTP verification with optional redirect URL or redirect to the intended URL if 2FA is disabled
       replaceHistory
         ? res.data
-          ? router.replace(redirect || "/")
+          ? router.replace(callbackUrl || "/")
           : router.replace(`/otp-verify?${searchParams.toString()}`)
         : res.data
-        ? router.push(redirect || "/")
+        ? router.push(callbackUrl || "/")
         : router.push(`/otp-verify?${searchParams.toString()}`);
     } else if (action === 'forgot-password') {
       // Send password reset email
@@ -143,7 +149,7 @@ const onSubmit = async (data: FormValues<"register">) => {
 
       const searchParams = new URLSearchParams({
         email: data.emailAddress,
-        redirect: redirect || '',
+        callbackUrl: callbackUrl || '',
       })
 
       // Redirect to forgot password reset page with optional redirect URL
@@ -174,7 +180,7 @@ const onSubmit = async (data: FormValues<"register">) => {
       });
 
       // Redirect user to the provided redirect URL or home page
-      replaceHistory ? router.replace(redirect || "/") : router.push(redirect || "/");
+      replaceHistory ? router.replace(callbackUrl || "/") : router.push(callbackUrl || "/");
     }
   };
 
@@ -268,7 +274,7 @@ const onSubmit = async (data: FormValues<"register">) => {
       {action === "forgot-password" && (
         <Link
           href={`/sign-in?${new URLSearchParams({
-            redirect: redirect || "",
+            callbackUrl: callbackUrl || "",
           }).toString()}`}
           replace={replaceHistory}
           className="text-green-500 text-sm font-medium ml-auto"
@@ -280,7 +286,7 @@ const onSubmit = async (data: FormValues<"register">) => {
       {action === "login" && (
         <Link
           href={`/forgot-password?${new URLSearchParams({
-            redirect: redirect || "",
+            callbackUrl: callbackUrl || "",
           }).toString()}`}
           replace={replaceHistory}
           className="text-green-500 text-sm font-medium ml-auto"

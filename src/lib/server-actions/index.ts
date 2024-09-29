@@ -1,47 +1,34 @@
 'use server'
 
-import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { cookies } from "next/headers";
-import { FetchResult } from "../types";
+import { FetchResult, LoginResponse } from "../types";
+import { JWT } from "next-auth/jwt";
+import { auth } from "@/auth";
 
-export const getCookie = async (name: string) => {
-  const cookieStore = cookies();
-  return cookieStore.get(name);
-};
+export const refreshAccessToken = async (token: JWT): Promise<JWT | null> => {
+  try {
+    const res = await customFetch("/refresh-token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token.refreshToken}`,
+      },
+    });
 
-export const setCookie = (
-  name: string,
-  value: string,
-  options: Partial<ResponseCookie>
-) => {
-  const cookieStore = cookies();
-  cookieStore.set(name, value, { path: "/", ...options });
-};
+    const { hasError, data } = await res.json() as LoginResponse;
 
-export const deleteCookie = (name: string) => {
-  const cookieStore = cookies();
-  cookieStore.delete(name);
-};
+    if (hasError || !data) return null
 
-export const saveAccessToken = (accessToken: string) => {
-  setCookie("token", accessToken, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV !== "development",
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-    path: "/",
-  });
-};
+    const { accessToken, refreshToken } = data
 
-export const saveRefreshToken = (refreshToken: string) => {
-  setCookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV !== "development",
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-    path: "/",
-  });
-};
+    return {
+      ...token,
+      accessToken,
+      refreshToken,
+    }
+  } catch (error) {
+    return null;
+  }
+}
 
 // use customFetch instead of fetch for interacting with the backend
 export const customFetch = async (
@@ -61,41 +48,14 @@ export const fetchWithAuth = async (
   input: RequestInfo | URL,
   init?: RequestInit
 ): Promise<Response> => {
-  const token = await getCookie("token");
-  const refreshToken = await getCookie("refreshToken");
+  const session = await auth()
 
   const headers = {
     ...init?.headers,
-    Authorization: `Bearer ${token?.value || ""}`,
+    Authorization: `Bearer ${session?.accessToken}`,
   };
 
-  let res = await customFetch(input, { ...init, headers });
-
-  if (res.status === 401) {
-    const refreshRes = await customFetch("/refresh-token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${refreshToken?.value || ""}`,
-      },
-    });
-
-    if (refreshRes.ok) {
-      const { accessToken } = await refreshRes.json();
-      saveAccessToken(accessToken);
-
-      // Recursively call fetchWithAuth with the new token
-      return fetchWithAuth(input, {
-        ...init,
-        headers: { ...headers, Authorization: `Bearer ${accessToken}` },
-      });
-    } else {
-      // If refresh token fails, return the original 401 response
-      return res;
-    }
-  }
-
-  return res;
+  return await customFetch(input, { ...init, headers });
 };
 
 export const getImageSrc = async ({

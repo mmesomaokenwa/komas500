@@ -2,13 +2,14 @@
 
 import { formatNumber } from '@/lib/utils';
 import { useAppSelector } from '@/redux-store/hooks';
-import Image from 'next/image';
+import { Image } from '@nextui-org/react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 import { IoIosArrowRoundForward } from 'react-icons/io';
 import { CartItem } from '@/lib/types';
 import CheckoutOptionsModal from './CheckoutOptionsModal';
 import { Button } from '@nextui-org/react';
+import { useSession } from 'next-auth/react';
 
 type PropsType = {
   cartItems: CartItem[]
@@ -17,7 +18,7 @@ type PropsType = {
 
 const TotalSummary = ({ imageSize }: PropsType) => {
   const [open, setOpen] = useState(false)
-  const profileImage = useAppSelector(state => state.user.profileUrl)
+  const { data: session } = useSession()
 
   const totalPrice = useAppSelector(state => state.cart.products.reduce((acc, product) => acc + (product.quantity * product.price), 0))
 
@@ -38,7 +39,7 @@ const TotalSummary = ({ imageSize }: PropsType) => {
         <div className="flex items-center justify-between">
           <p className="md:text-lg font-semibold">Total Summary</p>
           <Image
-            src={profileImage || ""}
+            src={session?.user.profileUrl || ""}
             alt="user"
             width={100}
             height={100}

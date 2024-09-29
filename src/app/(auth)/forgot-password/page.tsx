@@ -18,7 +18,7 @@ type PropsType = {
 
 const schema = z.object({
   email: z.string().email().optional(),
-  redirect: z.string().optional()
+  callbackUrl: z.string().optional()
 })
 
 const ForgotPassword = ({ searchParams }: PropsType) => {
@@ -29,10 +29,10 @@ const ForgotPassword = ({ searchParams }: PropsType) => {
         <p className="text-2xl text-center font-bold mb-2">
           {data?.email ? "Enter Verification Code" : "Forgot Password"}
         </p>
-        {data?.email ? <ForgotPasswordOtp email={data?.email} redirect={data?.redirect} /> : <AuthForm action="forgot-password" redirect={data?.redirect} />}
+        {data?.email ? <ForgotPasswordOtp email={data?.email} callbackUrl={data?.callbackUrl} /> : <AuthForm action="forgot-password" callbackUrl={data?.callbackUrl} />}
         <p>
           Don't have an account?{" "}
-          <Link href={`/sign-up?${new URLSearchParams({ redirect: data?.redirect || ''}).toString()}`} className="text-green-500">
+          <Link href={`/sign-up?${new URLSearchParams({ callbackUrl: data?.callbackUrl || ''}).toString()}`} className="text-green-500">
             Sign Up
           </Link>
         </p>

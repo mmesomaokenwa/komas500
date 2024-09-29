@@ -1,7 +1,7 @@
 'use client'
 
 import { useImage } from '@/hooks/queries'
-import Image, { ImageProps } from 'next/image'
+import { Image, ImageProps, Skeleton } from '@nextui-org/react'
 import React from 'react'
 
 type PropsType = ImageProps & {
@@ -11,10 +11,17 @@ type PropsType = ImageProps & {
 const ClientImageRender = ({ folderName, ...props }: PropsType) => {
   const { data: src, isLoading } = useImage({ folderName, fileName: props.src as string })
 
-  return isLoading ? (
-    <div className={`bg-gray-200 animate-pulse ${props.className}`} />
-  ) : (
-    <Image {...props} src={src || ""} />
+  return (
+    <Skeleton
+      isLoaded={!isLoading}
+      className={props.className}
+    >
+      <Image
+        {...props}
+        src={src || ""}
+        alt={props.alt}
+      />
+    </Skeleton>
   );
 }
 

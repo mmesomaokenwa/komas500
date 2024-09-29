@@ -1,17 +1,17 @@
 import React from 'react'
 import AccountInfoForm from './AccountInfoForm'
-import { getUser } from '@/lib/server-actions/user'
+import { auth } from '@/auth'
 
 type PropsType = {
   isIntercepted?: boolean
 }
 
 const AccountInfoFormWrapper = async ({ isIntercepted }: PropsType) => {
-  const data = await getUser();
+  const session = await auth();
 
-  const user = data.data;
+  const user = session?.user;
   
-  return <AccountInfoForm user={user} isIntercepted={isIntercepted} />
+  return <AccountInfoForm user={user!} isIntercepted={isIntercepted} />
 }
 
 export default AccountInfoFormWrapper

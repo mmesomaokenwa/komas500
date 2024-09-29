@@ -12,7 +12,7 @@ type PropsType = {
 };
 
 const schema = z.object({
-  redirect: z.string().optional(),
+  callbackUrl: z.string().optional(),
 });
 
 const InterceptedSignIn = ({ searchParams }: PropsType) => {
@@ -23,7 +23,11 @@ const InterceptedSignIn = ({ searchParams }: PropsType) => {
         Sign in to continue
       </ModalHeader>
       <ModalBody>
-        <AuthForm action="login" redirect={data?.redirect} replaceHistory />
+        <AuthForm
+          action="login"
+          callbackUrl={data?.callbackUrl}
+          replaceHistory
+        />
       </ModalBody>
       <ModalFooter className="justify-start">
         <p>
@@ -31,7 +35,7 @@ const InterceptedSignIn = ({ searchParams }: PropsType) => {
           <Link
             replace
             href={`/sign-up?${new URLSearchParams({
-              redirect: data?.redirect || "",
+              callbackUrl: data?.callbackUrl || "",
             }).toString()}`}
             className="text-green-500"
           >

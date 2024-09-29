@@ -1,25 +1,19 @@
 'use client'
 
 import { accountLinks } from '@/constants';
-import { useUser } from '@/hooks/queries';
 import { useAppDispatch, useAppSelector } from '@/redux-store/hooks';
 import { DeliveryAddress, deliveryActions } from '@/redux-store/store-slices/DeliverySlice';
-import { userActions } from '@/redux-store/store-slices/UserSlice';
-import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/react';
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Skeleton, User } from '@nextui-org/react';
 import React, { useEffect } from 'react'
+import { signOut, useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 
 const UserHeaderCard = () => {
   // Redux hooks for dispatch and selecting user and addressList
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user);
   const addressList = useAppSelector((state) => state.delivery.addressList);
-  const { data, isLoading } = useUser()
-
-  // update user's details on data change
-  useEffect(() => {
-    // Update user state
-    data && dispatch(userActions.setUser(data));
-  }, [data, dispatch]);
+  const { data: session, status } = useSession()
+  const pathname = usePathname()
 
   // Load delivery address list from localStorage
   useEffect(() => {
@@ -49,27 +43,50 @@ const UserHeaderCard = () => {
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
-        <Avatar
-          isBordered
+        <Skeleton
           as="button"
-          className="transition-transform"
-          color="secondary"
-          name="Jason Hughes"
-          size="sm"
-          src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-        />
+          isLoaded={status !== "loading"}
+          className="rounded-full"
+        >
+          <Avatar
+            isBordered
+            className="transition-transform"
+            color="secondary"
+            name={session?.user.profileUrl ? session?.user.fullName : undefined}
+            size="sm"
+            src={session?.user.profileUrl}
+            showFallback
+          />
+        </Skeleton>
       </DropdownTrigger>
-      <DropdownMenu aria-label="Profile Actions" variant="flat">
+      <DropdownMenu
+        aria-label="Profile Actions"
+        variant="flat"
+        onAction={(key) => key === 'logout' && signOut({ redirectTo: '/' })}
+      >
         <DropdownSection>
           <DropdownItem key="profile" isReadOnly className="h-14 gap-2">
-            <p className="font-semibold">Signed in as</p>
-            <p className="font-semibold">zoey@example.com</p>
+            <Skeleton isLoaded={status !== "loading"} className="rounded-lg">
+              <User
+                name={session?.user.fullName || 'Guest'}
+                description={session?.user.emailAddress}
+                avatarProps={{
+                  src: session?.user.profileUrl,
+                  showFallback: true
+                }}
+                classNames={{
+                  name: 'font-semibold',
+                }}
+              />
+            </Skeleton>
           </DropdownItem>
         </DropdownSection>
         <DropdownSection
-          items={accountLinks.filter(
-            (link) => link.link !== "/account/sign-out"
-          )}
+          items={
+            session?.user
+              ? accountLinks.filter((link) => link.link !== "/account/sign-out")
+              : []
+          }
         >
           {(link) => (
             <DropdownItem key={link.link} href={link.link}>
@@ -77,8 +94,12 @@ const UserHeaderCard = () => {
             </DropdownItem>
           )}
         </DropdownSection>
-        <DropdownItem key="logout" color="danger">
-          Log Out
+        <DropdownItem
+          key={session?.user ? "logout" : "/sign-in"}
+          color={session?.user ? "danger" : "success"}
+          href={session?.user ? undefined : `/sign-in?${new URLSearchParams({ callbackUrl: pathname}).toString()}`}
+        >
+          {session?.user ? "Log Out" : "Sign In"}
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>

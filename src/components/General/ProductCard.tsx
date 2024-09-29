@@ -9,6 +9,7 @@ import { Product } from "@/lib/types";
 import ServerImageRender from "./ServerImageRender";
 import { getBrandById } from "@/lib/server-actions/brand";
 import { getCategoryById } from "@/lib/server-actions/category";
+import { Skeleton } from "@nextui-org/react";
 
 type PropsType = {
   product: Product;
@@ -35,8 +36,8 @@ const ProductCard = ({ product, showCartBtn, className }: PropsType) => {
             folderName="products"
             src={product.images[0]}
             alt={product.name}
-            width={200}
-            height={200}
+            width={180}
+            isZoomed
             className="size-[180px] object-contain"
           />
         ) : (
@@ -52,9 +53,7 @@ const ProductCard = ({ product, showCartBtn, className }: PropsType) => {
                 product.brand.name
               ) : (
                 <Suspense
-                  fallback={
-                    <span className="w-[40%] h-4 bg-gray-100 animate-pulse rounded-lg" />
-                  }
+                  fallback={<Skeleton className="w-[40%] h-4 rounded-lg" />}
                 >
                   <BrandName brandId={product.brand} />
                 </Suspense>
@@ -65,9 +64,7 @@ const ProductCard = ({ product, showCartBtn, className }: PropsType) => {
                   product.category.name
                 ) : (
                   <Suspense
-                    fallback={
-                      <span className="w-[40%] h-4 bg-gray-100 animate-pulse rounded-lg" />
-                    }
+                    fallback={<Skeleton className="w-[40%] h-4 rounded-lg" />}
                   >
                     <CategoryName categoryId={product.category} />
                   </Suspense>

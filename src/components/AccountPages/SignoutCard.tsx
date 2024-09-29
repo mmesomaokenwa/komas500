@@ -1,20 +1,14 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/redux-store/hooks';
-import { userActions } from '@/redux-store/store-slices/UserSlice';
-import { logout } from '@/lib/server-actions/auth';
 import { Button } from '@nextui-org/react';
+import { signOut } from 'next-auth/react';
 
 const SignoutCard = () => {
-  const router = useRouter()
-  const dispatch = useAppDispatch()
-
   const handleSignout = () => { 
-    logout()
-    dispatch(userActions.resetUser())
-    router.push('/')
+    signOut({
+      redirectTo: '/',
+    })
   }
   return (
     <div className="flex flex-col gap-4 rounded-xl border p-4">

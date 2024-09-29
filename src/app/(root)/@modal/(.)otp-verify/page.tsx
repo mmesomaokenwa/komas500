@@ -12,7 +12,7 @@ type PropsType = {
 
 const schema = z.object({
   username: z.string().optional(),
-  redirect: z.string().optional(),
+  callbackUrl: z.string().optional(),
 });
 
 const InterceptedOtpVerify = ({ searchParams }: PropsType) => {
@@ -25,7 +25,7 @@ const InterceptedOtpVerify = ({ searchParams }: PropsType) => {
       <ModalBody>
         <VerifyUserOtp
           username={data?.username}
-          redirect={data?.redirect}
+          callbackUrl={data?.callbackUrl}
           replaceHistory
         />
       </ModalBody>

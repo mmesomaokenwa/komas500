@@ -20,7 +20,7 @@ const Toggle2FA = () => {
       return toast({ description: res.message, variant: 'destructive' })
     }
 
-    localStorage.setItem("is2FAEnabled", enabled.toString());
+    localStorage.setItem("is2FAEnabled", "true");
     
     toast({ description: res.message })
   }
@@ -33,7 +33,7 @@ const Toggle2FA = () => {
       return toast({ description: res.message, variant: 'destructive'})
     }
 
-    localStorage.setItem("is2FAEnabled", enabled.toString());
+    localStorage.setItem("is2FAEnabled", "false");
 
     toast({ description: res.message })
   }
@@ -44,12 +44,8 @@ const Toggle2FA = () => {
   }
 
   useEffect(() => {
-    try {
-      const isEnabled = Boolean(localStorage.getItem('is2FAEnabled'))
-      setEnabled(isEnabled)
-    } catch (error) {
-      console.log(error)
-    }
+    const isEnabled = localStorage.getItem('is2FAEnabled') === 'true'
+    setEnabled(isEnabled)
   }, [])
 
   return (

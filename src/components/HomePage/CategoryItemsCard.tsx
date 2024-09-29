@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import Image from 'next/image';
+import { Image, Skeleton } from '@nextui-org/react';
 import Link from 'next/link';
 import { Category } from '@/lib/types';
 import { getProductsByCategory, getProductsByVendorCategory } from '@/lib/server-actions/product';
@@ -38,18 +38,15 @@ const CategoryItemsCard = ({ category, getItemsLengthFor, className, baseRoute, 
         <div className="flex items-center justify-center">
           <Image
             src={"/Images/Home/categories/food/breakfast.png"}
-            height={200}
-            width={200}
+            width={120}
             alt={category.name}
             className="w-[120px] aspect-square object-contain"
           />
         </div>
         <div>
-          <h3 className="text-lg font-semibold">{category.name}</h3>
+          <h3 className="text-lg font-semibold line-clamp-1">{category.name}</h3>
           <Suspense
-            fallback={
-              <p className="bg-gray-200 animate-pulse py-3 w-2/3 mx-auto rounded-md"></p>
-            }
+            fallback={<Skeleton className=" py-3 w-2/3 mx-auto rounded-md" />}
           >
             <CategoryItemsLength
               categoryId={category._id}

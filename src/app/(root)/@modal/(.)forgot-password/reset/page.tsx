@@ -11,7 +11,7 @@ type PropsType = {
 };
 
 const schema = z.object({
-  redirect: z.string().optional(),
+  callbackUrl: z.string().optional(),
 });
 
 const InterceptedResetPassword = ({ searchParams }: PropsType) => {
@@ -24,7 +24,7 @@ const InterceptedResetPassword = ({ searchParams }: PropsType) => {
       <ModalBody>
         <AuthForm
           action="reset-password"
-          redirect={data?.redirect}
+          callbackUrl={data?.callbackUrl}
           replaceHistory
         />
       </ModalBody>

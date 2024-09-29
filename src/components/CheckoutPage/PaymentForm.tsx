@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { RadioGroup, RadioProps } from "@nextui-org/react";
 import CustomRadio from "../General/CustomRadio";
-import { useAppSelector } from "@/redux-store/hooks";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { paymentSchema } from "@/lib/schemas";
 import { Button } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 
 type FormData = z.infer<typeof paymentSchema>;
 
@@ -36,15 +36,17 @@ const PaymentForm = ({
   address,
   emailAddress,
 }: PropsType) => {
-  const user = useAppSelector((state) => state.user);
+  const { data: session } = useSession()
+  
+  const user = session?.user
 
   const form = useForm<FormData>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
       user: {
-        fullName: user.fullName,
-        address: user.address,
-        phoneNumber: user.phoneNumber,
+        fullName: user?.fullName,
+        address: user?.address,
+        phoneNumber: user?.phoneNumber,
       },
       delivery: {
         type: "",
@@ -93,7 +95,7 @@ const PaymentForm = ({
       vendor: vendorId,
       phone: data.user.phoneNumber,
       address: data.user.address,
-      email: emailAddress || user.emailAddress,
+      email: emailAddress || user?.emailAddress || '',
     });
     router.push(`/checkout/payment?${searchParams.toString()}`);
   };

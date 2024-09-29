@@ -16,7 +16,7 @@ type PropsType = {
 };
 
 const schema = z.object({
-  redirect: z.string().optional(),
+  callbackUrl: z.string().optional(),
 });
 
 const SignIn = ({ searchParams }: PropsType) => {
@@ -25,10 +25,15 @@ const SignIn = ({ searchParams }: PropsType) => {
     <div className="flex items-center justify-center flex-1 p-4 bg-white">
       <div className="w-full md:w-1/2 flex flex-col gap-4">
         <p className="text-2xl text-center font-bold mb-2">Sign In</p>
-        <AuthForm action="login" redirect={data?.redirect} />
+        <AuthForm action="login" callbackUrl={data?.callbackUrl} />
         <p>
           Don't have an account?{" "}
-          <Link href={`/sign-up?${new URLSearchParams({ redirect: data?.redirect || ''}).toString()}`} className="text-green-500">
+          <Link
+            href={`/sign-up?${new URLSearchParams({
+              callbackUrl: data?.callbackUrl || "",
+            }).toString()}`}
+            className="text-green-500"
+          >
             Sign Up
           </Link>
         </p>

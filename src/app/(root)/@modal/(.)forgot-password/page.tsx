@@ -14,7 +14,7 @@ type PropsType = {
 
 const schema = z.object({
   email: z.string().email().optional(),
-  redirect: z.string().optional(),
+  callbackUrl: z.string().optional(),
 });
 
 const InterceptedForgotPassword = ({ searchParams }: PropsType) => {
@@ -28,13 +28,13 @@ const InterceptedForgotPassword = ({ searchParams }: PropsType) => {
         {data?.email ? (
           <ForgotPasswordOtp
             email={data?.email}
-            redirect={data?.redirect}
+            callbackUrl={data?.callbackUrl}
             replaceHistory
           />
         ) : (
           <AuthForm
             action="forgot-password"
-            redirect={data?.redirect}
+            callbackUrl={data?.callbackUrl}
             replaceHistory
           />
         )}
@@ -44,7 +44,7 @@ const InterceptedForgotPassword = ({ searchParams }: PropsType) => {
           Don't have an account?{" "}
           <Link
             href={`/sign-up?${new URLSearchParams({
-              redirect: data?.redirect || "",
+              callbackUrl: data?.callbackUrl || "",
             }).toString()}`}
             replace
             className="text-green-500"

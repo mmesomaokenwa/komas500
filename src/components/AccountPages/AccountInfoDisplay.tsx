@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import Loader from '../General/Loader';
-import { getUser } from '@/lib/server-actions/user';
 import { Input } from '@nextui-org/react';
+import { auth } from '@/auth';
 
 type PropsType = {
   controls?: React.ReactNode
@@ -26,9 +26,9 @@ const AccountInfoDisplay = ({ controls }: PropsType) => {
 }
 
 const AccountInfo = async () => {
-  const data = await getUser();
+  const session = await auth();
 
-  const user = data.data;
+  const user = session?.user;
   return (
     <div className="flex flex-col gap-4">
       <Input

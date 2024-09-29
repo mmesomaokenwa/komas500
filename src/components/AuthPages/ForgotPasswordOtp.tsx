@@ -23,57 +23,61 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 type PropsType = {
-  email?: string
-  redirect?: string
-  replaceHistory?: boolean
-}
+  email?: string;
+  callbackUrl?: string;
+  replaceHistory?: boolean;
+};
 
-const ForgotPasswordOtp = ({ email, redirect, replaceHistory }: PropsType) => {
+const ForgotPasswordOtp = ({
+  email,
+  callbackUrl,
+  replaceHistory,
+}: PropsType) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    mode: 'onBlur',
+    mode: "onBlur",
     defaultValues: {
-      email: email || '',
-      code: ''
-    }
-  })
+      email: email || "",
+      code: "",
+    },
+  });
 
-  const router = useRouter()
+  const router = useRouter();
 
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const handleChange = (value: string) => {
-    form.setValue('code', value)
-  }
+    form.setValue("code", value);
+  };
 
-  const onSubmit = (data: FormValues) => { 
-    if (!data.email) return toast({
-      description: 'Something went wrong',
-      variant: 'destructive'
-    })
+  const onSubmit = (data: FormValues) => {
+    if (!data.email)
+      return toast({
+        description: "Something went wrong",
+        variant: "destructive",
+      });
 
     try {
       toast({
-        description: 'OTP verified successfully',
-      })
+        description: "OTP verified successfully",
+      });
 
       const searchParams = new URLSearchParams({
         email: data.email,
         code: data.code,
-        redirect: redirect || ''
-      })
-
+        callbackUrl: callbackUrl || "",
+      });
 
       replaceHistory
         ? router.replace(`/forgot-password/reset?${searchParams.toString()}`)
         : router.push(`/forgot-password/reset?${searchParams.toString()}`);
     } catch (error) {
       toast({
-        description: 'Something went wrong',
-        variant: 'destructive'
-      })
+        description: "Something went wrong",
+        variant: "destructive",
+      });
     }
-  }
+  };
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
       <InputOTP
@@ -103,6 +107,6 @@ const ForgotPasswordOtp = ({ email, redirect, replaceHistory }: PropsType) => {
       </Button>
     </form>
   );
-}
+};
 
 export default ForgotPasswordOtp

@@ -1,7 +1,5 @@
 "use client";
 
-import { useAppDispatch } from "@/redux-store/hooks";
-import { userActions } from "@/redux-store/store-slices/UserSlice";
 import { useForm } from "react-hook-form";
 import React from "react";
 import { z } from "zod";
@@ -20,6 +18,7 @@ import {
   getLocalTimeZone,
 } from "@internationalized/date";
 import Toggle2FA from "./Toggle2FA";
+import { useSession } from "next-auth/react";
 
 type FormData = z.infer<typeof accountSchema>;
 
@@ -46,7 +45,7 @@ const AccountInfoForm = ({ user, isIntercepted }: PropsType) => {
     mode: "all",
   });
 
-  const dispatch = useAppDispatch();
+  const { data: session, update } = useSession()
   const { setOpen } = useInterceptModal();
   const { toast } = useToast();
   const router = useRouter()
@@ -63,7 +62,14 @@ const AccountInfoForm = ({ user, isIntercepted }: PropsType) => {
     if (res.hasError) return toast({ description: res.message, variant: 'destructive' });
 
     // Dispatch an action to update user data with the response data
-    dispatch(userActions.updateUser({ ...res.data }));
+    update({
+      ...session,
+      user: {
+        ...user,
+        ...data,
+        fullName: `${data.firstName} ${data.lastName || ''}`,
+      },
+    })
 
     // Show a success toast message for updating account info
     toast({ description: "Account info updated" });

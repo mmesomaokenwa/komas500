@@ -9,7 +9,7 @@ type PropsType = {
 };
 
 const schema = z.object({
-  redirect: z.string().optional(),
+  callbackUrl: z.string().optional(),
   code: z.string(),
 });
 
@@ -19,7 +19,11 @@ const ResetPassword = ({ searchParams }: PropsType) => {
     <div className="flex items-center justify-center flex-1 p-4 bg-white">
       <div className="w-full md:w-1/2 flex flex-col gap-4">
         <p className="text-2xl text-center font-bold mb-2">New Password</p>
-        <AuthForm action="reset-password" redirect={data?.redirect} resetPasswordCode={data?.code}  />
+        <AuthForm
+          action="reset-password"
+          callbackUrl={data?.callbackUrl}
+          resetPasswordCode={data?.code}
+        />
       </div>
     </div>
   );
