@@ -32,7 +32,7 @@ export default function AppHeader() {
         brand: 'gap-6'
       }}
     >
-      <NavbarContent>
+      <NavbarContent as='div'>
         <NavbarMenuToggle
           aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
           className="md:hidden"
@@ -51,7 +51,11 @@ export default function AppHeader() {
           {/* <p className="font-bold text-inherit">ACME</p> */}
         </NavbarBrand>
       </NavbarContent>
-      <NavbarContent justify="end" className="gap-6 md:gap-10">
+      <NavbarContent
+        as='div'
+        justify="end"
+        className="gap-6 md:gap-10"
+      >
         <CartHeaderDisplay />
         <UserHeaderCard />
       </NavbarContent>

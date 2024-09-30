@@ -20,7 +20,8 @@ const VendorCard = ({ store }: PropsType) => {
             src={store.logo}
             alt={store.name}
             width={300}
-            className="w-full aspect-square rounded-lg shadow-lg"
+            height={300}
+            className="w-full aspect-square object-cover rounded-lg shadow-lg"
             style={{ objectFit: "contain" }}
           />
         ) : (

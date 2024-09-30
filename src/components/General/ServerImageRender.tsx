@@ -1,5 +1,6 @@
 import { getImageSrc } from '@/lib/server-actions'
-import { Image, ImageProps, Skeleton } from '@nextui-org/react'
+import { Skeleton } from '@nextui-org/react'
+import Image, { ImageProps } from 'next/image'
 import React, { Suspense } from 'react'
 
 type PropsType = ImageProps & {

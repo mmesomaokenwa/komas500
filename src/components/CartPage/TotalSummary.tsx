@@ -2,7 +2,7 @@
 
 import { formatNumber } from '@/lib/utils';
 import { useAppSelector } from '@/redux-store/hooks';
-import { Image } from '@nextui-org/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react'
 import { IoIosArrowRoundForward } from 'react-icons/io';

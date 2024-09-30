@@ -89,7 +89,8 @@ const ProductImages = ({images}: PropsType) => {
                   alt={image}
                   height={500}
                   width={500}
-                  className="object-cover overflow-hidden w-full aspect-square pointer-events-none rounded-xl"
+                  priority
+                  className="bg-gray-200 object-cover overflow-hidden w-full aspect-square pointer-events-none rounded-xl"
                 />
               </motion.div>
             ))}
@@ -110,8 +111,7 @@ const ProductImages = ({images}: PropsType) => {
                     alt={image}
                     height={100}
                     width={100}
-                    isZoomed
-                    className={`size-20 rounded-xl object-cover border-2 cursor-pointer ${
+                    className={`size-20 bg-gray-200 rounded-xl object-cover border-2 cursor-pointer ${
                       currentIndex === index
                         ? "border-green-500"
                         : "border-transparent"
@@ -134,8 +134,7 @@ const ProductImages = ({images}: PropsType) => {
                   alt={image}
                   height={100}
                   width={100}
-                  isZoomed
-                  className={`size-20 rounded-xl object-cover border-2 cursor-pointer ${
+                  className={`size-20 bg-gray-200 rounded-xl object-cover border-2 cursor-pointer ${
                     currentIndex === index
                       ? "border-green-500"
                       : "border-transparent"

@@ -1,7 +1,8 @@
 'use client'
 
 import { useImage } from '@/hooks/queries'
-import { Image, ImageProps, Skeleton } from '@nextui-org/react'
+import { Skeleton } from '@nextui-org/react'
+import Image, { ImageProps } from 'next/image'
 import React from 'react'
 
 type PropsType = ImageProps & {

@@ -1,4 +1,4 @@
-import { Image } from '@nextui-org/react';
+import Image from 'next/image';
 import React from 'react'
 import OrderCardControls from './OrderCardControls';
 
@@ -15,8 +15,9 @@ const OrderCard = ({ className, status }: PropsType) => {
       <Image
         src={"/Images/card.jpg"}
         alt="product name"
+        height={100}
         width={100}
-        className="w-16 md:w-20 object-cover rounded-3xl"
+        className="w-16 md:w-20 object-cover rounded-3xl bg-gray-200"
       />
       <div className="flex flex-col gap-1 w-full">
         <div className="flex items-center justify-between gap-4">

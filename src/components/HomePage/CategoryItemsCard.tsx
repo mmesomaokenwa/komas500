@@ -1,8 +1,9 @@
 import React, { Suspense } from 'react';
-import { Image, Skeleton } from '@nextui-org/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Category } from '@/lib/types';
 import { getProductsByCategory, getProductsByVendorCategory } from '@/lib/server-actions/product';
+import { Skeleton } from '@nextui-org/react';
 
 export type GetFor = 'allProducts' | 'vendorProducts'
 
@@ -25,9 +26,8 @@ type ItemsLengthProps = {
 const CategoryItemsCard = ({ category, getItemsLengthFor, className, baseRoute, stopNavigateScroll, isSelected, vendorId }: CardProps) => {
   return (
     <div
-      aria-selected={isSelected}
       data-selected={isSelected}
-      className={`group bg-white rounded-xl p-4 text-center shadow-sm aria-selected:bg-green-500 aria-selected:text-white ${className}`}
+      className={`group bg-white rounded-xl p-4 text-center shadow-sm data-[selected=true]:bg-green-500 data-[selected=true]:text-white ${className}`}
     >
       <Link
         aria-label={category.name}
@@ -38,7 +38,8 @@ const CategoryItemsCard = ({ category, getItemsLengthFor, className, baseRoute, 
         <div className="flex items-center justify-center">
           <Image
             src={"/Images/Home/categories/food/breakfast.png"}
-            width={120}
+            width={200}
+            height={200}
             alt={category.name}
             className="w-[120px] aspect-square object-contain"
           />

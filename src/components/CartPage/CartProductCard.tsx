@@ -1,6 +1,6 @@
 import React from 'react'
 import CartControls from './CartControls';
-import { Image } from '@nextui-org/react';
+import Image from 'next/image';
 import { CartItem } from '@/lib/types';
 
 type PropsType = {
@@ -17,7 +17,7 @@ const CartProductCard = ({ className, cartItem }: PropsType) => {
           alt={cartItem.product.name}
           height={100}
           width={100}
-          className="size-14 md:size-20 object-cover rounded-3xl"
+          className="size-14 md:size-20 object-cover rounded-3xl bg-gray-200"
         />
         <div className="flex flex-col gap-2">
           <h3 className="md:text-lg font-semibold">{cartItem.product.name}</h3>

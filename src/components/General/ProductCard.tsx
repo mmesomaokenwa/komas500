@@ -36,8 +36,8 @@ const ProductCard = ({ product, showCartBtn, className }: PropsType) => {
             folderName="products"
             src={product.images[0]}
             alt={product.name}
-            width={180}
-            isZoomed
+            width={200}
+            height={200}
             className="size-[180px] object-contain"
           />
         ) : (
