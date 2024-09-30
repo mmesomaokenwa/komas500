@@ -3,6 +3,7 @@
 import { FetchResult, LoginResponse } from "../types";
 import { JWT } from "next-auth/jwt";
 import { auth } from "@/auth";
+import { revalidatePath } from "next/cache";
 
 export const refreshAccessToken = async (token: JWT): Promise<JWT | null> => {
   try {
@@ -83,3 +84,7 @@ export const getImageSrc = async ({
     };
   }
 };
+
+export const handleRevalidatePath = (path: string, type?: 'layout' | 'page') => {
+  revalidatePath(path, type);
+}

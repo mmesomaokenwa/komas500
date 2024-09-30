@@ -37,8 +37,6 @@ export const updateUser = async (
       body: JSON.stringify(data),
     });
 
-    revalidatePath("/account/profile", "layout");
-
     return await res.json();
   } catch (error: any) {
     return {

@@ -18,6 +18,7 @@ import {
 } from "@internationalized/date";
 import Toggle2FA from "./Toggle2FA";
 import { useSession } from "next-auth/react";
+import { handleRevalidatePath } from "@/lib/server-actions";
 
 type FormData = z.infer<typeof accountSchema>;
 
@@ -74,6 +75,9 @@ const AccountInfoForm = ({ user, isIntercepted }: PropsType) => {
 
     // Reset the form after submission
     form.reset(data);
+
+    // Revalidate the profile layout
+    handleRevalidatePath("/account/profile", "layout");
 
     // Close the modal if intercepted, otherwise refresh the router
     isIntercepted ? router.back() : router.refresh();
