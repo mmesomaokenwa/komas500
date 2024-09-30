@@ -59,7 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt: async ({ token, account, user }) => {
+    jwt: async ({ token, account, user, trigger, session }) => {
       // user is only available the first time a user signs in authorized
       if (token.accessToken) {
         const decodedToken = jwtDecode(token.accessToken);
@@ -67,6 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.accessTokenExpires = (decodedToken?.exp || 0) * 1000;
       }
 
+      // Return new token if this is the first time logging in
       if (account && user) return {
           ...token,
           accessToken: user.accessToken,
@@ -75,16 +76,44 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
 
       // Return previous token if the access token has not expired yet
-      if (Date.now() < token.accessTokenExpires) return token;
+      if (Date.now() < token.accessTokenExpires) {
+        // Update the previous session if update action is triggered
+        if (trigger === 'update' && session?.user) { 
+          return {
+            ...token,
+            user: session.user,
+          }
+        }
+
+        // Return the previous session
+        return token;
+      };
 
       // Access token has expired, try to update it
-      return refreshAccessToken(token);
+      const newToken = await refreshAccessToken(token);
+
+      if (newToken) {
+        // Update the previous session if update action is triggered
+        if (trigger === "update" && session?.user) {
+          return {
+            ...newToken,
+            user: session.user,
+          };
+        }
+
+        // Return the previous session with the new token
+        return newToken;
+      }
+
+      // Access token could not be refreshed
+      return null;
     },
     session: async ({ session, token }) => {
       if (token) {
         session.accessToken = token.accessToken;
         session.user = token.user;
       }
+
       return session;
     },
     authorized: async ({ auth, request }) => {
