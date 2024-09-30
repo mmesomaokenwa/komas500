@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { generateRandomId } from "@/lib/utils";
 import { shippingSchema } from "@/lib/schemas";
-import { useInterceptModal } from "@/providers/InterceptModalProvider";
 import { useToast } from "@/hooks/use-toast";
 import { Button, Input } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
@@ -49,7 +48,6 @@ const DeliveryAddressForm = ({ action, addressId, isIntercepted }: PropsType) =>
     },
   });
 
-  const { setOpen } = useInterceptModal();
   const { toast } = useToast()
   const router = useRouter();
 
@@ -88,7 +86,7 @@ const DeliveryAddressForm = ({ action, addressId, isIntercepted }: PropsType) =>
     form.reset(data)
 
     // Close the modal if intercepted, otherwise refresh the router
-    isIntercepted ? setOpen(false) : router.refresh()
+    isIntercepted ? router.back() : router.refresh()
   };
 
   return (

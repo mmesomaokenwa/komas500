@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Select, SelectItem } from "@nextui-org/select";
 import { accountSchema } from "@/lib/schemas";
 import { User } from "@/lib/types";
-import { useInterceptModal } from "@/providers/InterceptModalProvider";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { updateUser } from "@/lib/server-actions/user";
@@ -46,7 +45,6 @@ const AccountInfoForm = ({ user, isIntercepted }: PropsType) => {
   });
 
   const { data: session, update } = useSession()
-  const { setOpen } = useInterceptModal();
   const { toast } = useToast();
   const router = useRouter()
 
@@ -78,7 +76,7 @@ const AccountInfoForm = ({ user, isIntercepted }: PropsType) => {
     form.reset(data);
 
     // Close the modal if intercepted, otherwise refresh the router
-    isIntercepted ? setOpen(false) : router.refresh();
+    isIntercepted ? router.back() : router.refresh();
   };
 
   const handleDateChange = (value: DateValue) => {

@@ -37,9 +37,11 @@ export default function GeneralLayout({
                   enableColorScheme
                   forcedTheme="light"
                 >
-                  <UIProvider>{children}</UIProvider>
-                </ThemeProvider>
-                <Toaster />
+                  <UIProvider>
+                    {children}
+                    <Toaster />
+                  </UIProvider>
+                </ThemeProvider>       
               </WidthProvider>
             </QueryProvider>
           </StoreProvider>

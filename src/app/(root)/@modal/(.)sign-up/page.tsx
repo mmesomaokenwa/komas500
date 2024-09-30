@@ -23,7 +23,11 @@ const InterceptedSignUp = ({ searchParams }: PropsType) => {
         Create Account
       </ModalHeader>
       <ModalBody>
-        <AuthForm action="register" callbackUrl={data?.callbackUrl} />
+        <AuthForm
+          action="register"
+          callbackUrl={data?.callbackUrl}
+          replaceHistory
+        />
       </ModalBody>
       <ModalFooter className="justify-start">
         <p>

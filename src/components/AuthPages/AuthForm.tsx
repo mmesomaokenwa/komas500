@@ -125,13 +125,13 @@ const onSubmit = async (data: FormValues<"register">) => {
       })
 
       // Redirect to OTP verification with optional redirect URL or redirect to the intended URL if 2FA is disabled
-      replaceHistory
-        ? res.data
-          ? router.replace(callbackUrl || "/")
-          : router.replace(`/otp-verify?${searchParams.toString()}`)
-        : res.data
-        ? router.push(callbackUrl || "/")
-        : router.push(`/otp-verify?${searchParams.toString()}`);
+      if (replaceHistory) {
+        if (res.data) router.replace(callbackUrl || "/");
+        else router.replace(`/otp-verify?${searchParams.toString()}`);
+      } else {
+        if (res.data) router.push(callbackUrl || "/");
+        else router.push(`/otp-verify?${searchParams.toString()}`);
+      }
     } else if (action === 'forgot-password') {
       // Send password reset email
       const res = await sendPasswordResetCode(data.emailAddress);
