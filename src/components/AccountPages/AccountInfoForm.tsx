@@ -77,7 +77,9 @@ const AccountInfoForm = ({ user, isIntercepted }: PropsType) => {
     form.reset(data);
 
     // Revalidate the profile layout
-    handleRevalidatePath("/account/profile", "layout");
+    handleRevalidatePath("/account/profile/info");
+    handleRevalidatePath("/account/profile/edit")
+    handleRevalidatePath("/account/profile/edit/me")
 
     // Close the modal if intercepted, otherwise refresh the router
     isIntercepted ? router.back() : router.refresh();
