@@ -81,8 +81,8 @@ export const verifyUser = async (data: {
 
 export const sendPasswordResetCode = async (username: string): Promise<FetchResult<null>> => {
   try {
-    const res = await customFetch("/user/forgot-password", {
-      method: "POST",
+    const res = await customFetch("/user/forget-password", {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
@@ -103,11 +103,11 @@ export const sendPasswordResetCode = async (username: string): Promise<FetchResu
 export const resetPassword = async (data: {
   username: string;
   code: string;
-  password: string;
+  newPassword: string;
 }): Promise<FetchResult<null>> => {
   try {
     const res = await customFetch("/user/reset-password", {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },

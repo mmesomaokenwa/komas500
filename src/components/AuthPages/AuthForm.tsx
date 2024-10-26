@@ -18,21 +18,18 @@ import { createUser, loginUser, resetPassword, sendPasswordResetCode } from "@/l
 import { Button, Input } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 
-type Action = "register" | "login" | "forgot-password" | "reset-password";
+type Action = "register" | "login" | "forgot-password";
 
 type FormValues<T extends Action> = T extends "register"
   ? z.infer<typeof registerSchema>
   : T extends "login"
   ? z.infer<typeof loginSchema>
-  : T extends "forgot-password"
-  ? z.infer<typeof forgotPasswordSchema>
-  : z.infer<typeof resetPasswordSchema>;
+  : z.infer<typeof forgotPasswordSchema>
 
 const formSchema = {
   register: registerSchema,
   login: loginSchema,
   "forgot-password": forgotPasswordSchema,
-  "reset-password": resetPasswordSchema,
 };
 
 interface PropsType<T extends Action> {
@@ -155,32 +152,11 @@ const onSubmit = async (data: FormValues<"register">) => {
       // Redirect to forgot password reset page with optional redirect URL
       replaceHistory
         ? router.replace(
-            `/forgot-password/reset?${searchParams.toString()}`
+            `/forgot-password?${searchParams.toString()}`
           )
         : router.push(
-            `/forgot-password/reset?${searchParams.toString()}`
+            `/forgot-password?${searchParams.toString()}`
           );
-    } else {
-      // Reset password
-      const res = await resetPassword({
-        username: data.emailAddress,
-        code: resetPasswordCode || '',
-        password: data.password,
-      });
-
-      // Display success or error message based on the response
-      if (res.hasError)
-        return toast({
-          description: res.message,
-          variant: "destructive",
-        });
-      
-      toast({
-        description: res.message,
-      });
-
-      // Redirect user to the provided redirect URL or home page
-      replaceHistory ? router.replace(callbackUrl || "/") : router.push(callbackUrl || "/");
     }
   };
 
@@ -201,28 +177,24 @@ const onSubmit = async (data: FormValues<"register">) => {
         />
       )}
 
-      {action !== "reset-password" && (
-        <Input
-          type="email"
-          label="Email"
-          size="lg"
-          variant="underlined"
-          color="success"
-          isInvalid={!!form.formState.errors.emailAddress}
-          {...form.register("emailAddress")}
-          errorMessage={form.formState.errors.emailAddress?.message}
-          classNames={{
-            label: "font-medium text-black",
-          }}
-        />
-      )}
+      <Input
+        type="email"
+        label="Email"
+        size="lg"
+        variant="underlined"
+        color="success"
+        isInvalid={!!form.formState.errors.emailAddress}
+        {...form.register("emailAddress")}
+        errorMessage={form.formState.errors.emailAddress?.message}
+        classNames={{
+          label: "font-medium text-black",
+        }}
+      />
 
       {action !== "forgot-password" && (
         <Input
           type={showPassword ? "text" : "password"}
-          label={
-            action === "reset-password" ? "Enter New Password" : "Password"
-          }
+          label={"Password"}
           size="lg"
           variant="underlined"
           color="success"
@@ -242,14 +214,10 @@ const onSubmit = async (data: FormValues<"register">) => {
         />
       )}
 
-      {["register", "reset-password"].includes(action) && (
+      {["register"].includes(action) && (
         <Input
           type={showConfirmPassword ? "text" : "password"}
-          label={
-            action === "reset-password"
-              ? "Confirm New Password"
-              : "Confirm Password"
-          }
+          label={"Confirm Password"}
           size="lg"
           variant="underlined"
           color="success"

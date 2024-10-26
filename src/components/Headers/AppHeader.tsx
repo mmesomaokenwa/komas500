@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useWidth } from "@/providers/WidthProvider";
 import CartHeaderDisplay from "./CartHeaderDisplay";
 import KomasLogo from "./KomasLogo";
+import Image from "next/image";
 
 export default function AppHeader() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
@@ -47,7 +48,12 @@ export default function AppHeader() {
               <p className="text-xs">Aladinma Owerre Imo</p>
             </div>
           </div>
-          <KomasLogo />
+          <Image
+            src={'/Icons/KOMASblack.svg'}
+            alt="KOMAS Logo"
+            width={120}
+            height={60}
+          />
           {/* <p className="font-bold text-inherit">ACME</p> */}
         </NavbarBrand>
       </NavbarContent>
