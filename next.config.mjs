@@ -9,7 +9,7 @@ const nextConfig = {
       },
     ],
   },
-  staticPageGenerationTimout: 120
+  staticPageGenerationTimeout: 120
 };
 
 export default nextConfig;
